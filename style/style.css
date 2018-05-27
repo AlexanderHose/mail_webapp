@@ -28,3 +28,8 @@ textarea.form-control {
 button.btn{
   margin-left:2px;
 }
+div.alert{
+  position:absolute;
+  right:2%;
+  top:2%;
+}

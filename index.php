@@ -13,9 +13,10 @@ if (session_status() == PHP_SESSION_NONE) {
   <title>Mail Client</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
   <link rel="stylesheet" href="style/style.css">
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+  <script src="js/toggleError.js"></script>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -28,14 +29,23 @@ if (session_status() == PHP_SESSION_NONE) {
         <li class="nav-item">
           <a class="nav-link" href="php/delete.php?delete=true">Delete all tiles</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="">Refresh mail</a>
-        </li>
       </ul>
-      <button type="button" class="btn btn-secondary" onclick="window.location.href='php/logout.php'">Logout</button>
+      <button type="button" class="btn btn-secondary" onclick="window.location.href='#'">Logout</button>
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#login">Add mail provider</button>
     </div>
   </nav>
+    <?php
+      if(isset($_SESSION['error'])){
+        echo('
+        <div class="alert alert-danger alert-dismissible fade show col-sm-2" role="alert">'
+        .$_SESSION['error'].
+        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>');
+          unset($_SESSION['error']);
+      }
+    ?>
 <div class="container-fluid text-center">
   <div class="row content">
     <div class="col-sm-2 sidenav">
@@ -59,6 +69,7 @@ if (session_status() == PHP_SESSION_NONE) {
                       echo('
                       <div class="card" style="width: 18rem;">
                         <div class="card-body">
+                        <span class="badge badge-primary">'.$content_array[2].'</span>
                           <h5 class="card-title">'.$content_array[0].'</h5>
                           <p class="card-text">'.$content_array[1].'</p>
                           <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#'.explode(".", $entry)[0].'">Open</a>
@@ -77,7 +88,7 @@ if (session_status() == PHP_SESSION_NONE) {
                               </button>
                             </div>
                             <div class="modal-body">
-                              <textarea class="form-control" id="message-text">'.$content_array[2].'</textarea>
+                              <textarea class="form-control" id="message-text">'.$content_array[3].'</textarea>
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
@@ -123,7 +134,11 @@ if (session_status() == PHP_SESSION_NONE) {
               <label for="email" class="col-sm-3 control-label">
                                   Email</label>
               <div class="col-sm-9">
-                <input required="true" type="email" class="form-control" name="email" id="email" placeholder="Email" />
+                <input required="true" type="email" class="form-control" name="email" id="email" placeholder="Email" value="<?php
+                if(isset($_SESSION['mail_addr'])){
+                  echo($_SESSION['mail_addr']);
+                }
+                ?>"/>
               </div>
             </div>
             <div class="form-group">
@@ -137,7 +152,11 @@ if (session_status() == PHP_SESSION_NONE) {
               <label for="imap-server" class="col-sm-3 control-label">
                                   IMAP Server</label>
               <div class="col-sm-9">
-                <input required="true" type="imap-server" class="form-control" name="imap-server" id="imap-server" placeholder="Server" />
+                <input required="true" type="imap-server" class="form-control" name="imap-server" id="imap-server" placeholder="Server" value="<?php
+                if(isset($_SESSION['imap_server'])){
+                  echo($_SESSION['imap_server']);
+                }
+                ?>"/>
               </div>
             </div>
             <div class="form-group">

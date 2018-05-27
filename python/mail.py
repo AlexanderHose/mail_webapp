@@ -6,6 +6,7 @@ import sys
 import argparse
 import urllib
 
+from socket import gaierror
 from bs4 import BeautifulSoup
 
 mailbox = "INBOX"
@@ -32,15 +33,18 @@ def read_arguments():
     folderContent = "../content/" + str(parser.parse_args().path)
 
 def login_mail():
-    mail = imaplib.IMAP4_SSL(IMAPserver)
     try:
+        mail = imaplib.IMAP4_SSL(IMAPserver)
         mail.login(emailaddr, password)
     except imaplib.IMAP4.error:
-        print("LOGIN FAILED")
+        print("Login failed")
+        return
+    except gaierror:
+        print("IMAP Server error")
+        return
     rv, mailboxes = mail.list()
     rv, data = mail.select(mailbox, readonly=True)
     if rv == 'OK':
-        print("Processing mailbox...")
         process_mailbox(mail)
         mail.close()
     mail.logout()
@@ -58,7 +62,7 @@ def process_mailbox(mail):
         email_msg = email.message_from_bytes(data[0][1])
         emailDate = email_msg["Date"]
         emailSubject = email_msg["Subject"]
-        emailBody = emailSubject + "::" + emailDate + "::"
+        emailBody = emailSubject + "::" + emailDate + "::" + IMAPserver + "::"
         try:
             if (email_msg.is_multipart()):
                 for payload in email_msg.get_payload():

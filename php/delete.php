@@ -12,8 +12,6 @@ function delete_mail_tiles(){
         unlink('../content/'.$mail_path."/".$entry);
       }
     }
-  rmdir('../content/'.$mail_path);
-  unset($_SESSION['mail_path']);
 }
 header("Location: ../index.php");
 die();

@@ -17,8 +17,7 @@
 
   #echo("python ../python/mail.py -e " . $mail_addr . " -p " . $password . " -s " . $imap_server . " --path " . $mail_path);
   $command= escapeshellcmd("python ../python/mail.py -e " . $mail_addr . " -p " . $password . " -s " . $imap_server . " --path " . $mail_path);
-  $output = shell_exec($command);
-  #echo $output;
+  $_SESSION['error'] = shell_exec($command);
   header("Location: ../index.php");
   die();
   function randomString($length = 38){
